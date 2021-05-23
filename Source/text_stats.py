@@ -1,19 +1,20 @@
 from __future__ import division, print_function, unicode_literals
-from typing import Iterable, List
+from typing import Iterable, List, Dict
+
 try:
     import re2 as re
 except ImportError:
     import re
 from syllables_counter import LANGDATA
-from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fox_index
+from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
 from nltk.probability import FreqDist
 
 
-def get_words_freq(word_tokens: list) -> list:
+def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
     """
-
-    :param word_tokens:
-    :return:
+    Finds a 10 most used words in the text
+    :param word_tokens: word tokens
+    :return: list of 10 used words in the text
     """
     fdist = FreqDist(word_tokens)
     top_ten = fdist.most_common(10)
@@ -21,11 +22,11 @@ def get_words_freq(word_tokens: list) -> list:
 
 
 # Returns a quantity of paragraphs present in a text.
-def get_paragraphs_count(raw_text: Iterable[str]) -> int:
+def get_paragraphs_count(raw_text: List[str]) -> int:
     """
-
-    :param raw_text:
-    :return:
+    Calculates the quantity of paragraphs present in a text
+    :param raw_text: raw text from input file
+    :return: quantity of paragraphs
     """
     paragraphs = 1
 
@@ -40,13 +41,11 @@ def get_paragraphs_count(raw_text: Iterable[str]) -> int:
     return paragraphs
 
 
-# Filters word tokens by removing special symbols.
-# Returns filtered list of word tokens.
-def word_token_filter(word_token):
+def word_token_filter(word_token: List[str]) -> List[str]:  # TODO
     """
-
-    :param word_token:
-    :return:
+    Filters word tokens by removing special symbols.
+    :param word_token: word tokens
+    :return: filtered list of word tokens
     """
     # list comprehensions!!!!
     word_token_filtered = [word for word in word_token if word.isalnum()]
@@ -88,7 +87,7 @@ TAG_WORD_CATEGORY_MAPPING = {
 
 
 # Returns dictionary with words usage: nouns, adverbs and so on
-def get_parts_of_speech(tagged_word_tokens: list) -> dict:
+def get_parts_of_speech(tagged_word_tokens: List[str, str]) -> Dict[str, int]:
     """
 
     :param tagged_word_tokens:
@@ -115,7 +114,7 @@ def get_parts_of_speech(tagged_word_tokens: list) -> dict:
 
 # Makes all necessary text measures.
 # Returns an ordered dictionary.
-def get_measures(parsed_text: list) -> dict:
+def get_measures(parsed_text: Dict[str]) -> Dict:
     """
 
     :param parsed_text:
@@ -131,9 +130,9 @@ def get_measures(parsed_text: list) -> dict:
     if isinstance(parsed_text, bytes):
         raise ValueError('Expected: unicode string or an iterable of lines')
 
-    paragraphs = get_paragraphs_count(parsed_text['rawText'])
-    total_sentences = len(parsed_text['sentToken'])
-    filtered_word_tokens = word_token_filter(parsed_text['wordToken'])
+    paragraphs = get_paragraphs_count(parsed_text['raw_text'])
+    total_sentences = len(parsed_text['sentence_token'])
+    filtered_word_tokens = word_token_filter(parsed_text['word_token'])
     parts_of_speech = get_parts_of_speech(parsed_text['tagged'])
     total_words = len(filtered_word_tokens)
     words_frequency = get_words_freq(filtered_word_tokens)
@@ -175,9 +174,8 @@ def get_measures(parsed_text: list) -> dict:
         ('Flesch Reading Ease',
          flesch_reading_ease(total_syllables, total_words, total_sentences)),
         ('Gunning Fog Index',
-         gunning_fox_index(total_words, complex_words, total_sentences))
+         gunning_fog_index(total_words, complex_words, total_sentences))
     ])
-    print(type(readability['Kincaid']))
     return dict([
         ('READABILITY GRADES', readability),
         ('TEXT INFO', stats),
