@@ -5,11 +5,10 @@ import argparse
 
 
 # Prints a dictionary line by line
-def display_dict(dictionary):
+def display_dict(dictionary: dict) -> None:
     """
     Prints a dictionary line by line
     :param dictionary:
-    :param parsed:
     :return: None
     """
     if isinstance(dictionary, type(dictionary)):

@@ -1,13 +1,11 @@
 from nltk import sent_tokenize, word_tokenize, pos_tag
 
 
-# Transforms raw text into sentence and word tokens; tags them.
-# Returns a dictionary of raw text word, sentence tokens and tags.
-def text_parser(raw_text):
+def text_parser(raw_text: str) -> dict:
     """
-
-    :param raw_text:
-    :return:
+    Transforms raw text into sentence and word tokens, tags them.
+    :param raw_text: raw text from input file
+    :return: a dictionary of raw text word, sentence tokens and tags.
     """
     word_token = []
 
@@ -18,8 +16,8 @@ def text_parser(raw_text):
     tagged = pos_tag(word_token)
 
     return dict(
-        rawText=raw_text,
-        wordToken=word_token,
-        sentToken=sent_token,
+        raw_text=raw_text,
+        word_token=word_token,
+        sentence_token=sent_token,
         tagged=tagged
     )

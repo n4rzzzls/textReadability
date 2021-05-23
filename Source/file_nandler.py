@@ -2,7 +2,7 @@ import textract
 import PyPDF2
 
 
-def read_pdf(file_name):
+def read_pdf(file_name: str = '') -> str:
     """
     Reader for .pdf files
     :param file_name: file name
@@ -14,7 +14,7 @@ def read_pdf(file_name):
     return raw_text
 
 
-def read_default(file_name):
+def read_default(file_name: str = '') -> str:
     """
     Default file reader
     :param file_name: file name
@@ -29,8 +29,6 @@ READER_FUNCTIONS = {
 }
 
 
-# Reads .txt/.odt/.pdf/.docx and transforms it into raw text.
-# Returns raw text in string type.
 def file_reader(file_name: str = '') -> str:
     """
     Reads a file
@@ -42,8 +40,7 @@ def file_reader(file_name: str = '') -> str:
     return reader_function(file_name)
 
 
-# Writes results into the specified file
-def file_writer(file_name, readability_results):
+def file_writer(file_name: str, readability_results: dict) -> None:
     """
     Writes the results into the file
     :param file_name: file name
