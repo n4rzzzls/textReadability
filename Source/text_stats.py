@@ -87,7 +87,7 @@ TAG_WORD_CATEGORY_MAPPING = {
 
 
 # Returns dictionary with words usage: nouns, adverbs and so on
-def get_parts_of_speech(tagged_word_tokens: List[str, str]) -> Dict[str, int]:
+def get_parts_of_speech(tagged_word_tokens: List) -> Dict[str, int]:
     """
 
     :param tagged_word_tokens:
@@ -114,7 +114,7 @@ def get_parts_of_speech(tagged_word_tokens: List[str, str]) -> Dict[str, int]:
 
 # Makes all necessary text measures.
 # Returns an ordered dictionary.
-def get_measures(parsed_text: Dict[str]) -> Dict:
+def get_measures(parsed_text: dict) -> dict:
     """
 
     :param parsed_text:
