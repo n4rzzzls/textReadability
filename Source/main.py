@@ -39,7 +39,6 @@ def main():
         results = get_measures(parsed_text)
 
     if args.c:
-        print(results)
         display_dict(results)
 
     if args.o:
