@@ -41,25 +41,43 @@ def get_paragraphs_count(raw_text: List[str]) -> int:
     return paragraphs
 
 
-def word_token_filter(word_token: List[str]) -> List[str]:  # TODO
+FILTERED_SYMBOLS = {
+    ',',
+    '.',
+    '!',
+    '?'
+}
+
+
+def word_token_filter(word_tokens: List[str]) -> List[str]:  # TODO
     """
     Filters word tokens by removing special symbols.
-    :param word_token: word tokens
+    :param word_tokens: word tokens
     :return: filtered list of word tokens
     """
+    pos = 0
     # list comprehensions!!!!
-    word_token_filtered = [word for word in word_token if word.isalnum()]
+    word_tokens_filtered = []
+    #word_token_filtered = [word for word in word_token if word.isalnum()]
+    for word_token in word_tokens:
+        if len(word_token) == 1 and word_token.isalpha():
+            word_tokens_filtered.append(word_token)
+            pos += 1
 
+        elif word_token.startswith('\''):
+            word_token = word_token.replace('\'', '')
+            word_tokens_filtered[pos-1] += word_token
 
-    # for word in wordToken:
-    #     for char in word:
-    #         if not char.isalnum():
-    #             word = word.replace(char, "")
-    #
-    #     if word.isalnum():
-    #         word_token_filtered.append(word)
+        elif word_token.isalpha():
+            word_tokens_filtered.append(word_token)
+            pos += 1
 
-    return word_token_filtered
+        elif "-" in word_token:
+            word_tokens_filtered.append(word_token)
+
+    # import pdb; pdb.set_trace()
+
+    return word_tokens_filtered
 
 
 TAG_WORD_CATEGORY_MAPPING = {
