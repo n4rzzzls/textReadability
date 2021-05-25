@@ -25,25 +25,25 @@ def display_dict(dictionary: dict) -> None:
 
 
 def main():
+    args_parser = argparse.ArgumentParser()
+    args_parser.add_argument("-i", "--input-file", required=True, type=str, help='specify path name for input file')
+    args_parser.add_argument("-o", "--output-file", required=False, type=str, help='specify path name for output file')
+    args_parser.add_argument("-c", "--console", required=False, action='store_true', help='display readability '
+                                                                                          'results in console')
+    args = args_parser.parse_args()
 
-    argsParser = argparse.ArgumentParser()
-    argsParser.add_argument("--i", required=True, type=str)
-    argsParser.add_argument("--o", required=False, type=str)
-    argsParser.add_argument("--c", required=False, action='store_true')
-    args = argsParser.parse_args()
-
-    if args.i:
-        input_file_name = args.i
+    if args.input_file:
+        input_file_name = args.input_file
         raw_text = file_reader(input_file_name)
         parsed_text = text_parser(raw_text)
         results = get_measures(parsed_text)
 
-    if args.c:
-        display_dict(results)
+    if args.output_file:
+        output_file = args.output_file
+        file_writer(output_file, results)
 
-    if args.o:
-        outputFile = args.o
-        file_writer(outputFile, results)
+    if args.console:
+        display_dict(results)
 
 
 if __name__ == '__main__':

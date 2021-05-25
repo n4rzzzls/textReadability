@@ -48,5 +48,5 @@ def file_writer(file_name: str, readability_results: dict) -> None:
     :return: None
     """
     with open(file_name, 'w') as reader:
-        reader.write(readability_results)
+        reader.write(str(readability_results))
         reader.flush()
