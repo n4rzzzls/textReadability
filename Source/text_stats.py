@@ -58,7 +58,16 @@ def word_token_filter(word_tokens: List[str]) -> List[str]:  # TODO
     pos = 0
     # list comprehensions!!!!
     word_tokens_filtered = []
-    #word_token_filtered = [word for word in word_token if word.isalnum()]
+    # word_token_filtered = [word for word in word_tokens if word.isalnum()]
+
+    # for word in word_tokens:
+    #     for c in word:
+    #         if not c.isalpha():
+    #             word = word.replace(c, "")
+    #
+    #     if word.isalpha():
+    #         word_tokens_filtered.append(word)
+
     for word_token in word_tokens:
         if len(word_token) == 1 and word_token.isalpha():
             word_tokens_filtered.append(word_token)
@@ -66,7 +75,7 @@ def word_token_filter(word_tokens: List[str]) -> List[str]:  # TODO
 
         elif word_token.startswith('\''):
             word_token = word_token.replace('\'', '')
-            word_tokens_filtered[pos-1] += word_token
+            word_tokens_filtered[pos - 1] += word_token
 
         elif word_token.isalpha():
             word_tokens_filtered.append(word_token)
@@ -75,7 +84,8 @@ def word_token_filter(word_tokens: List[str]) -> List[str]:  # TODO
         elif "-" in word_token:
             word_tokens_filtered.append(word_token)
 
-    # import pdb; pdb.set_trace()
+    import pdb;
+    pdb.set_trace()
 
     return word_tokens_filtered
 
