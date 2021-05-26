@@ -3,7 +3,7 @@ from constants import COLEMAN_LIAU_INDEX_CONSTANTS, ARI_CONSTANTS, \
     FLESH_READING_EASE_CONSTANTS
 
 
-def kincaid_grade_level(total_syllables: int, total_words: int, total_sentences: int) -> float:
+def kincaid_grade_level(total_syllables: float, total_words: float, total_sentences: float) -> float:
     """
     Calculates readability score using the Flesch-Kincaid Grade Level.
     The Flesch-Kincaid Grade Level is equivalent to the US grade level of education.
@@ -17,7 +17,7 @@ def kincaid_grade_level(total_syllables: int, total_words: int, total_sentences:
         'SECOND'] * (total_syllables / total_words) - KINCAID_GRADE_LEVEL_CONSTANTS['THIRD']
 
 
-def flesch_reading_ease(total_syllables: int, total_words: int, total_sentences: int) -> float:
+def flesch_reading_ease(total_syllables: float, total_words: float, total_sentences: float) -> float:
     """
     Calculates readability score using the Flesh-Kincaid Reading Ease.
     The higher the reading score, the easier a piece of text is to read.
@@ -26,11 +26,11 @@ def flesch_reading_ease(total_syllables: int, total_words: int, total_sentences:
     :param total_sentences: total amount of sentences in the text
     :return: reading ease score
     """
-    return FLESH_READING_EASE_CONSTANTS['FIRST'] - FLESH_READING_EASE_CONSTANTS['SECOND'] * (
-                total_words / total_sentences) - FLESH_READING_EASE_CONSTANTS['THIRD'] * (total_syllables / total_words)
+    return FLESH_READING_EASE_CONSTANTS['FIRST'] - (FLESH_READING_EASE_CONSTANTS['SECOND'] * (
+                total_words / total_sentences)) - (FLESH_READING_EASE_CONSTANTS['THIRD'] * (total_syllables / total_words))
 
 
-def ari(total_characters: int, total_words: int, total_sentences: int) -> float:
+def ari(total_characters: float, total_words: float, total_sentences: float) -> float:
     """
     Calculates readability score using the Automated Readability Index.
     The ARI assesses the U.S. grade level required to read a piece of text.
@@ -42,10 +42,11 @@ def ari(total_characters: int, total_words: int, total_sentences: int) -> float:
     :param total_sentences: total amount of sentences in the text
     :return: readability index. The higher the harder the text is to read
     """
-    return ARI_CONSTANTS['FIRST'] * (total_characters / total_words) + ARI_CONSTANTS['SECOND'] * (total_words / total_sentences) - ARI_CONSTANTS['THIRD']
+    return ARI_CONSTANTS['FIRST'] * (total_characters / total_words) + ARI_CONSTANTS[
+        'SECOND'] * (total_words / total_sentences) - ARI_CONSTANTS['THIRD']
 
 
-def coleman_liau_index(total_characters: int, total_words: int, total_sentences: int) -> float:
+def coleman_liau_index(total_characters: float, total_words: float, total_sentences: float) -> float:
     """
     Calculates readability score using the Coleman Liau Index.
     :param total_characters: total amount of characters in the text
@@ -58,7 +59,7 @@ def coleman_liau_index(total_characters: int, total_words: int, total_sentences:
             - COLEMAN_LIAU_INDEX_CONSTANTS['THIRD'])
 
 
-def gunning_fog_index(total_words: int, total_complex_words: int, total_sentences: int) -> float:
+def gunning_fog_index(total_words: float, total_complex_words: float, total_sentences: float) -> float:
     """
     Calculates readability score using the Gunning Fog Index.
     The Gunning Fog formula generates a grade level between 0 and 20. It estimates the education level
@@ -68,4 +69,5 @@ def gunning_fog_index(total_words: int, total_complex_words: int, total_sentence
     :param total_sentences: total amount of sentences in the text
     :return: gunning fog index. The higher index the harder text readability is
     """
-    return GUNNING_FOX_INDEX_CONSTANTS['FIRST'] * ((total_words / total_sentences) + (GUNNING_FOX_INDEX_CONSTANTS['SECOND'] * (total_complex_words / total_words)))
+    return GUNNING_FOX_INDEX_CONSTANTS['FIRST'] * ((total_words / total_sentences) + (GUNNING_FOX_INDEX_CONSTANTS[
+                                                                      'SECOND'] * (total_complex_words / total_words)))

@@ -1,4 +1,3 @@
-import nltk
 from nltk import sent_tokenize, word_tokenize, pos_tag
 
 
@@ -18,7 +17,7 @@ def text_parser(raw_text: str) -> dict:
 
     return dict(
         raw_text=raw_text,
-        word_token=word_token,
-        sentence_token=sent_token,
+        word_tokens=word_token,
+        sentence_tokens=sent_token,
         tagged=tagged
     )
