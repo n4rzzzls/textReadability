@@ -1,13 +1,13 @@
 from __future__ import division, print_function, unicode_literals
-from typing import Iterable, List, Dict
-
+from typing import List, Dict
+from utils import is_word_long
+from syllables_counter import get_syllables_counter
+from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
+from nltk.probability import FreqDist
 try:
     import re2 as re
 except ImportError:
     import re
-from syllables_counter import LANGDATA
-from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
-from nltk.probability import FreqDist
 
 
 def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
@@ -21,7 +21,6 @@ def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
     return top_ten
 
 
-# Returns a quantity of paragraphs present in a text.
 def get_paragraphs_count(raw_text: List[str]) -> int:
     """
     Calculates the quantity of paragraphs present in a text
@@ -41,51 +40,65 @@ def get_paragraphs_count(raw_text: List[str]) -> int:
     return paragraphs
 
 
-FILTERED_SYMBOLS = {
+def get_characters_count(word_tokens: List[str]) -> int:
+    """
+    Counts the amount of characters in the text
+    :param word_tokens:
+    :return:
+    """
+    characters = 0
+
+    for word in word_tokens:
+        for symbol in word:
+            if symbol.isalpha():
+                characters += 1
+
+    return characters
+
+
+FILTERED_SYMBOLS = (
     ',',
     '.',
     '!',
-    '?'
-}
+    '?',
+    '\'',
+    '`',
+    '\"',
+    '``',
+    '\'\''
+)
 
 
-def word_token_filter(word_tokens: List[str]) -> List[str]:  # TODO
+def word_token_filter(tagged_word_tokens: List[str]) -> List[str]:
     """
-    Filters word tokens by removing special symbols.
-    :param word_tokens: word tokens
+    Filters word tokens.
+    :param tagged_word_tokens: list of tagged word tokens
     :return: filtered list of word tokens
     """
-    pos = 0
-    # list comprehensions!!!!
+
     word_tokens_filtered = []
-    # word_token_filtered = [word for word in word_tokens if word.isalnum()]
 
-    # for word in word_tokens:
-    #     for c in word:
-    #         if not c.isalpha():
-    #             word = word.replace(c, "")
-    #
-    #     if word.isalpha():
-    #         word_tokens_filtered.append(word)
+    for tagged_word_token in tagged_word_tokens:
+        word_token, word_tag = tagged_word_token
 
-    for word_token in word_tokens:
-        if len(word_token) == 1 and word_token.isalpha():
-            word_tokens_filtered.append(word_token)
-            pos += 1
+        if word_tag == 'POS':
+            word_tokens_filtered[len(word_tokens_filtered) - 1] += word_token
+            continue
 
-        elif word_token.startswith('\''):
-            word_token = word_token.replace('\'', '')
-            word_tokens_filtered[pos - 1] += word_token
+        if word_token in FILTERED_SYMBOLS:
+            continue
 
-        elif word_token.isalpha():
-            word_tokens_filtered.append(word_token)
-            pos += 1
+        if word_token.isdecimal():
+            continue
 
-        elif "-" in word_token:
-            word_tokens_filtered.append(word_token)
+        if word_token.find('-') != -1:
+            x = word_token.split('-')
 
-    import pdb;
-    pdb.set_trace()
+            for y in x:
+                word_tokens_filtered.append(y)
+            continue
+
+        word_tokens_filtered.append(word_token)
 
     return word_tokens_filtered
 
@@ -117,7 +130,7 @@ TAG_WORD_CATEGORY_MAPPING = {
 # Returns dictionary with words usage: nouns, adverbs and so on
 def get_parts_of_speech(tagged_word_tokens: List) -> Dict[str, int]:
     """
-
+    Distributes the words amongst parts of speech
     :param tagged_word_tokens:
     :return:
     """
@@ -140,70 +153,69 @@ def get_parts_of_speech(tagged_word_tokens: List) -> Dict[str, int]:
     return words
 
 
-# Makes all necessary text measures.
-# Returns an ordered dictionary.
-def get_measures(parsed_text: dict) -> dict:
+def get_text_measures(parsed_text: dict) -> dict:
     """
-
-    :param parsed_text:
-    :return:
+    Performs all necessary text measures
+    :param parsed_text: parsed text
+    :return: readability grades, text statistics and parts of speech
     """
-    characters = 0
     total_syllables = 0
-    complex_words = 0
-    long_words = 0
-    unique_words = set()
-    syllables_counter = LANGDATA['syllables']
+    total_complex_words = 0
+    total_long_words = 0
+    total_unique_words = set()
 
     if isinstance(parsed_text, bytes):
         raise ValueError('Expected: unicode string or an iterable of lines')
 
-    paragraphs = get_paragraphs_count(parsed_text['raw_text'])
-    total_sentences = len(parsed_text['sentence_token'])
-    filtered_word_tokens = word_token_filter(parsed_text['word_token'])
+    total_paragraphs = get_paragraphs_count(parsed_text['raw_text'])
+    total_sentences = len(parsed_text['sentence_tokens'])
+    filtered_word_tokens = word_token_filter(parsed_text['tagged'])
     parts_of_speech = get_parts_of_speech(parsed_text['tagged'])
     total_words = len(filtered_word_tokens)
     words_frequency = get_words_freq(filtered_word_tokens)
+    total_characters = get_characters_count(parsed_text['word_tokens'])
 
     for word_token in filtered_word_tokens:
-        unique_words.add(word_token)
-        characters += len(word_token)
-        syllable = syllables_counter(word_token)
+        total_unique_words.add(word_token)
+        syllable = get_syllables_counter(word_token)
         total_syllables += syllable
-        if len(word_token) >= 7:  # TODO: magic number!! Can be in another function
-            long_words += 1
+
+        if is_word_long(word_token):
+            total_long_words += 1
 
         if syllable >= 3 and not word_token[0].isupper():  # TODO: magic number!!
-            complex_words += 1
+            total_complex_words += 1
 
     if not total_words:
         raise ValueError("I can't do this, there's no words there!")
 
     stats = dict([
-        ('Average number of characters per word', characters / total_words),
+        ('Average number of characters per word', total_characters / total_words),
         ('Average number of syllables per word', total_syllables / total_words),
         ('Average number of words per sentence', total_words / total_sentences),
-        ('Sentences per paragraph', total_sentences / paragraphs),
-        ('Number of characters (without spaces)', characters),
+        ('Sentences per paragraph', total_sentences / total_paragraphs),
+        ('Number of characters', total_characters),
         ('Syllables', total_syllables),
         ('Number of words', total_words),
-        ('Unique words', len(unique_words)),
+        ('Unique words', len(total_unique_words)),
         ('Number of sentences', total_sentences),
-        ('Number of paragraphs', paragraphs),
-        ('Number of long words', long_words),
-        ('Number of complex words', complex_words),
+        ('Number of paragraphs', total_paragraphs),
+        ('Number of long words', total_long_words),
+        ('Number of complex words', total_complex_words),
         ('Words frequency', words_frequency)
     ])
+
     readability = dict([
         ('Kincaid', kincaid_grade_level(total_syllables, total_words, total_sentences)),
-        ('ARI', ari(characters, total_words, total_sentences)),
+        ('ARI', ari(total_characters, total_words, total_sentences)),
         ('Coleman-Liau',
-         coleman_liau_index(characters, total_words, total_sentences)),
+         coleman_liau_index(total_characters, total_words, total_sentences)),
         ('Flesch Reading Ease',
          flesch_reading_ease(total_syllables, total_words, total_sentences)),
         ('Gunning Fog Index',
-         gunning_fog_index(total_words, complex_words, total_sentences))
+         gunning_fog_index(total_words, total_complex_words, total_sentences))
     ])
+
     return dict([
         ('READABILITY GRADES', readability),
         ('TEXT INFO', stats),

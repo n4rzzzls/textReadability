@@ -1,14 +1,13 @@
 from text_parser import text_parser
-from text_stats import get_measures
+from text_stats import get_text_measures
 from file_nandler import file_reader, file_writer
 import argparse
 
 
-# Prints a dictionary line by line
 def display_dict(dictionary: dict) -> None:
     """
     Prints a dictionary line by line
-    :param dictionary:
+    :param dictionary: dictionary to be displayed
     :return: None
     """
     if isinstance(dictionary, type(dictionary)):
@@ -25,6 +24,9 @@ def display_dict(dictionary: dict) -> None:
 
 
 def main():
+
+    results = ''
+
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("-i", "--input-file", required=True, type=str, help='specify path name for input file')
     args_parser.add_argument("-o", "--output-file", required=False, type=str, help='specify path name for output file')
@@ -36,7 +38,7 @@ def main():
         input_file_name = args.input_file
         raw_text = file_reader(input_file_name)
         parsed_text = text_parser(raw_text)
-        results = get_measures(parsed_text)
+        results = get_text_measures(parsed_text)
 
     if args.output_file:
         output_file = args.output_file
