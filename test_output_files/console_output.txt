@@ -1,0 +1,46 @@
+--------------------
+ READABILITY GRADES
+ --------------------
+Kincaid : 13.742214876033056
+ARI : 16.321983471074383
+Coleman-Liau : 14.999901859504131
+Flesch Reading Ease : 39.64059504132234
+Gunning Fog Index : 15.96099173553719
+--------------------
+ TEXT INFO
+ --------------------
+Average number of characters per word : 5.446280991735537
+Average number of syllables per word : 1.6859504132231404
+Average number of words per sentence : 24.2
+Sentences per paragraph : 2.5
+Number of characters : 659
+Syllables : 204
+Number of words : 121
+Unique words : 93
+Number of sentences : 5
+Number of paragraphs : 2
+Number of long words : 42
+Number of complex words : 19
+10 most used words:
+        "the" : 6
+        "have" : 4
+        "a" : 4
+        "killed" : 3
+        "of" : 3
+        "in" : 3
+        "on" : 3
+        "including" : 2
+        "been" : 2
+        "week" : 2
+--------------------
+ PARTS OF SPEECH
+ --------------------
+Pronouns : 2
+Modals : 2
+Conjunctions : 2
+Foreign words : 0
+Prepositions : 0
+Cardinal digits : 5
+Adverbs : 1
+Verbs : 28
+Nouns : 41

@@ -12,6 +12,9 @@
 #text.odt
 #text.docx
 
+./test_output_files/console_output.txt
+./other
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
