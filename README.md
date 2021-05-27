@@ -1,5 +1,5 @@
-# textReadability
-Software service with a plug-in architecture for assessing the readability of text.
+# textReadability (WIP)
+Software service for assessing the readability of text.
 
 ## Command line usage
 ```commandline

@@ -1,13 +1,33 @@
 from __future__ import division, print_function, unicode_literals
 from typing import List, Dict
 from utils import is_word_long
-from syllables_counter import get_syllables_counter
 from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
 from nltk.probability import FreqDist
 try:
     import re2 as re
 except ImportError:
     import re
+
+
+def get_syllables_counter(word: str) -> int:
+    """
+    Counts the amount of syllables in the word
+    :param word: word to be used for counting
+    :return: the amount of syllables in the word
+    """
+    word = word.lower()
+    count = 0
+    vowels = "aeiouy"
+    if word[0] in vowels:
+        count += 1
+    for index in range(1, len(word)):
+        if word[index] in vowels and word[index - 1] not in vowels:
+            count += 1
+    if word.endswith("e") and not word.endswith("le"):
+        count -= 1
+    if count == 0:
+        count += 1
+    return count
 
 
 def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
@@ -189,11 +209,16 @@ def get_text_measures(parsed_text: dict) -> dict:
     if not total_words:
         raise ValueError("I can't do this, there's no words there!")
 
+    characters_per_word = total_characters / total_words
+    syllables_per_word = total_syllables / total_words
+    word_per_sentence = total_words / total_sentences
+    sentences_per_paragraph = total_sentences / total_paragraphs
+
     stats = dict([
-        ('Average number of characters per word', total_characters / total_words),
-        ('Average number of syllables per word', total_syllables / total_words),
-        ('Average number of words per sentence', total_words / total_sentences),
-        ('Sentences per paragraph', total_sentences / total_paragraphs),
+        ('Average number of characters per word', characters_per_word),
+        ('Average number of syllables per word', syllables_per_word),
+        ('Average number of words per sentence', word_per_sentence),
+        ('Sentences per paragraph', sentences_per_paragraph),
         ('Number of characters', total_characters),
         ('Syllables', total_syllables),
         ('Number of words', total_words),
