@@ -184,9 +184,6 @@ def get_text_measures(parsed_text: dict) -> dict:
     total_long_words = 0
     total_unique_words = set()
 
-    if isinstance(parsed_text, bytes):
-        raise ValueError('Expected: unicode string or an iterable of lines')
-
     total_paragraphs = get_paragraphs_count(parsed_text['raw_text'])
     total_sentences = len(parsed_text['sentence_tokens'])
     filtered_word_tokens = word_token_filter(parsed_text['tagged'])

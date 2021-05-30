@@ -1,6 +1,6 @@
 import cProfile
 
-from text_parser import text_parser
+from text_parser import text_parsing
 from text_stats import get_text_measures
 from file_nandler import file_reader, file_writer
 from args_parser import args_parsing
@@ -15,7 +15,7 @@ def main():
     if args.input_file:
         input_file_name = args.input_file
         raw_text = file_reader(input_file_name)
-        parsed_text = text_parser(raw_text)
+        parsed_text = text_parsing(raw_text)
         results = get_text_measures(parsed_text)
 
     if args.output_file:

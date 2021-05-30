@@ -1,7 +1,7 @@
 from nltk import sent_tokenize, word_tokenize, pos_tag
 
 
-def text_parser(raw_text: str) -> dict:
+def text_parsing(raw_text: str) -> dict:
     """
     Transforms raw text into sentence and word tokens, tags them.
     :param raw_text: raw text from input file
