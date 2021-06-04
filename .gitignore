@@ -12,8 +12,8 @@
 #text.odt
 #text.docx
 
-test_output_files/console_output.txt
-other
+./test_output_files/console_output.txt
+./other
 
 # User-specific stuff
 .idea/**/workspace.xml
