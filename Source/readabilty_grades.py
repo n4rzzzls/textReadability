@@ -1,9 +1,10 @@
 from constants import COLEMAN_LIAU_INDEX_CONSTANTS, ARI_CONSTANTS, \
     GUNNING_FOX_INDEX_CONSTANTS, KINCAID_GRADE_LEVEL_CONSTANTS, \
-    FLESH_READING_EASE_CONSTANTS
+    FLESH_READING_EASE_CONSTANTS, FLESH_READING_EASE_LEVELS, ARI_LEVELS, KINCAID_GRADE_LEVELS,\
+    COLEMAN_LIAU_INDEX_LEVELS, GUNNING_FOG_INDEX_LEVELS
 
 
-def kincaid_grade_level(total_syllables: float, total_words: float, total_sentences: float) -> float:
+def kincaid_grade_level(total_syllables: float, total_words: float, total_sentences: float) -> list:
     """
     Calculates readability score using the Flesch-Kincaid Grade Level.
     The Flesch-Kincaid Grade Level is equivalent to the US grade level of education.
@@ -13,11 +14,21 @@ def kincaid_grade_level(total_syllables: float, total_words: float, total_senten
     :param total_sentences: total amount of sentences in the text
     :return: grade level
     """
-    return KINCAID_GRADE_LEVEL_CONSTANTS['FIRST'] * (total_words / total_sentences) + KINCAID_GRADE_LEVEL_CONSTANTS[
-        'SECOND'] * (total_syllables / total_words) - KINCAID_GRADE_LEVEL_CONSTANTS['THIRD']
+    readability_result = None
+
+    readability_score = round(
+        KINCAID_GRADE_LEVEL_CONSTANTS['FIRST'] * (total_words / total_sentences) + KINCAID_GRADE_LEVEL_CONSTANTS[
+            'SECOND'] * (total_syllables / total_words) - KINCAID_GRADE_LEVEL_CONSTANTS['THIRD'])
+
+    for readability_level, score in KINCAID_GRADE_LEVELS.items():
+
+        if readability_score in score:
+            readability_result = [readability_score, readability_level]
+
+    return readability_result
 
 
-def flesch_reading_ease(total_syllables: float, total_words: float, total_sentences: float) -> float:
+def flesch_reading_ease(total_syllables: float, total_words: float, total_sentences: float) -> list:
     """
     Calculates readability score using the Flesh-Kincaid Reading Ease.
     The higher the reading score, the easier a piece of text is to read.
@@ -26,11 +37,20 @@ def flesch_reading_ease(total_syllables: float, total_words: float, total_senten
     :param total_sentences: total amount of sentences in the text
     :return: reading ease score
     """
-    return FLESH_READING_EASE_CONSTANTS['FIRST'] - (FLESH_READING_EASE_CONSTANTS['SECOND'] * (
-                total_words / total_sentences)) - (FLESH_READING_EASE_CONSTANTS['THIRD'] * (total_syllables / total_words))
+
+    readability_result = None
+
+    readability_score = round(FLESH_READING_EASE_CONSTANTS['FIRST'] - (FLESH_READING_EASE_CONSTANTS['SECOND'] * (
+            total_words / total_sentences)) - (FLESH_READING_EASE_CONSTANTS['THIRD'] * (total_syllables / total_words)))
+
+    for readability_level, score in FLESH_READING_EASE_LEVELS.items():
+        if readability_score in score:
+            readability_result = [readability_score, readability_level]
+
+    return readability_result
 
 
-def ari(total_characters: float, total_words: float, total_sentences: float) -> float:
+def ari(total_characters: float, total_words: float, total_sentences: float) -> list:
     """
     Calculates readability score using the Automated Readability Index.
     The ARI assesses the U.S. grade level required to read a piece of text.
@@ -42,11 +62,20 @@ def ari(total_characters: float, total_words: float, total_sentences: float) -> 
     :param total_sentences: total amount of sentences in the text
     :return: readability index. The higher the harder the text is to read
     """
-    return ARI_CONSTANTS['FIRST'] * (total_characters / total_words) + ARI_CONSTANTS[
-        'SECOND'] * (total_words / total_sentences) - ARI_CONSTANTS['THIRD']
+
+    readability_result = None
+
+    readability_score = round(ARI_CONSTANTS['FIRST'] * (total_characters / total_words) + ARI_CONSTANTS[
+        'SECOND'] * (total_words / total_sentences) - ARI_CONSTANTS['THIRD'])
+
+    for readability_level, score in ARI_LEVELS.items():
+        if readability_score in score:
+            readability_result = [readability_score, readability_level]
+
+    return readability_result
 
 
-def coleman_liau_index(total_characters: float, total_words: float, total_sentences: float) -> float:
+def coleman_liau_index(total_characters: float, total_words: float, total_sentences: float) -> list:
     """
     Calculates readability score using the Coleman Liau Index.
     :param total_characters: total amount of characters in the text
@@ -54,12 +83,22 @@ def coleman_liau_index(total_characters: float, total_words: float, total_senten
     :param total_sentences: total amount of sentences in the text
     :return: Coleman Liau Index
     """
-    return (COLEMAN_LIAU_INDEX_CONSTANTS['FIRST'] * (total_characters / total_words) - COLEMAN_LIAU_INDEX_CONSTANTS[
-        'SECOND'] * (total_sentences / total_words)
-            - COLEMAN_LIAU_INDEX_CONSTANTS['THIRD'])
+
+    readability_result = None
+
+    readability_score = round(
+        COLEMAN_LIAU_INDEX_CONSTANTS['FIRST'] * (total_characters / total_words) - COLEMAN_LIAU_INDEX_CONSTANTS[
+            'SECOND'] * (total_sentences / total_words)
+        - COLEMAN_LIAU_INDEX_CONSTANTS['THIRD'])
+
+    for readability_level, score in COLEMAN_LIAU_INDEX_LEVELS.items():
+        if readability_score in score:
+            readability_result = [readability_score, readability_level]
+
+    return readability_result
 
 
-def gunning_fog_index(total_words: float, total_complex_words: float, total_sentences: float) -> float:
+def gunning_fog_index(total_words: float, total_complex_words: float, total_sentences: float) -> list:
     """
     Calculates readability score using the Gunning Fog Index.
     The Gunning Fog formula generates a grade level between 0 and 20. It estimates the education level
@@ -69,5 +108,16 @@ def gunning_fog_index(total_words: float, total_complex_words: float, total_sent
     :param total_sentences: total amount of sentences in the text
     :return: gunning fog index. The higher index the harder text readability is
     """
-    return GUNNING_FOX_INDEX_CONSTANTS['FIRST'] * ((total_words / total_sentences) + (GUNNING_FOX_INDEX_CONSTANTS[
-                                                                      'SECOND'] * (total_complex_words / total_words)))
+
+    readability_result = None
+
+    readability_score = round(
+        GUNNING_FOX_INDEX_CONSTANTS['FIRST'] * ((total_words / total_sentences) + (GUNNING_FOX_INDEX_CONSTANTS[
+                                                                                       'SECOND'] * (
+                                                                                               total_complex_words / total_words))))
+
+    for readability_level, score in GUNNING_FOG_INDEX_LEVELS.items():
+        if readability_score in score:
+            readability_result = [readability_score, readability_level]
+
+    return readability_result

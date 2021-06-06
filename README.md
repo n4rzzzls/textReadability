@@ -1,5 +1,11 @@
 # textReadability (WIP)
-Software service with a plug-in architecture for assessing the readability of text.
+Software service with plug-in architecture for assessing the readability of text.
+
+# Install
+```commandline
+pip install requirements.txt
+python -m nltk.downloader punkt
+```
 
 ## Command line usage
 ```commandline

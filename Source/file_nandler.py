@@ -21,6 +21,13 @@ def read_default(file_name: str = '') -> str:
     :return: text from a file
     """
     raw_text = textract.process(file_name).decode('utf-8')
+
+    if len(raw_text) <= 100:
+        raise ValueError('The length of input text should be longed than 100 symbols')
+
+    if isinstance(raw_text, bytes):
+        raise ValueError('Unicode string or an iterable of lines is expected')
+
     return raw_text
 
 

@@ -9,24 +9,41 @@ except ImportError:
     import re
 
 
+def get_sentence_count(sentence_tokens: List[str]) -> int:
+    return len(sentence_tokens)
+
+
 def get_syllables_counter(word: str) -> int:
     """
     Counts the amount of syllables in the word
     :param word: word to be used for counting
     :return: the amount of syllables in the word
     """
+    # word = word.lower()
+    # count = 0
+    # vowels = "aeiouy"
+    # if word[0] in vowels:
+    #     count += 1
+    # for index in range(1, len(word)):
+    #     if word[index] in vowels and word[index - 1] not in vowels:
+    #         count += 1
+    # if word.endswith("e") and not word.endswith("le"):
+    #     count -= 1
+    # if count == 0:
+    #     count += 1
+
+    word = word if type(word) is str else str(word)
+
     word = word.lower()
-    count = 0
-    vowels = "aeiouy"
-    if word[0] in vowels:
-        count += 1
-    for index in range(1, len(word)):
-        if word[index] in vowels and word[index - 1] not in vowels:
-            count += 1
-    if word.endswith("e") and not word.endswith("le"):
-        count -= 1
-    if count == 0:
-        count += 1
+
+    if len(word) <= 3:
+        return 1
+    # import pdb; pdb.set_trace()
+    word = re.sub('(?:[^laeiouy]es|[^laeiouy]e)$', '', word)
+    word = re.sub('^y', '', word)
+    matches = re.findall('[aeiouy]{1,2}', word)
+    count = len(matches)
+
     return count
 
 
@@ -41,23 +58,29 @@ def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
     return top_ten
 
 
-def get_paragraphs_count(raw_text: List[str]) -> int:
-    """
-    Calculates the quantity of paragraphs present in a text
-    :param raw_text: raw text from input file
-    :return: quantity of paragraphs
-    """
-    paragraphs = 1
+def get_words_count(filtered_word_tokens: List[str]) -> int:
+    return len(filtered_word_tokens)
 
-    is_newline = False
-    for sent in raw_text:
-        if is_newline and sent == "\n":
-            paragraphs += 1
-            is_newline = False
-        elif sent == "\n":
-            is_newline = True
-            continue
-    return paragraphs
+
+# def get_paragraphs_count(raw_text: List[str]) -> int:
+#     """
+#     Calculates the quantity of paragraphs present in a text
+#     :param raw_text: raw text from input file
+#     :return: quantity of paragraphs
+#     """
+#     paragraphs_count = 1
+#     is_newline = False
+#
+#     for char in raw_text:
+#
+#         if char == "\n" and not is_newline:
+#             is_newline = True
+#
+#         elif is_newline and char == "\n":
+#             paragraphs_count += 1
+#             is_newline = False
+#
+#     return paragraphs_count
 
 
 def get_characters_count(word_tokens: List[str]) -> int:
@@ -184,14 +207,11 @@ def get_text_measures(parsed_text: dict) -> dict:
     total_long_words = 0
     total_unique_words = set()
 
-    if isinstance(parsed_text, bytes):
-        raise ValueError('Expected: unicode string or an iterable of lines')
-
-    total_paragraphs = get_paragraphs_count(parsed_text['raw_text'])
-    total_sentences = len(parsed_text['sentence_tokens'])
+    # total_paragraphs = get_paragraphs_count(parsed_text['raw_text'])
+    total_sentences = get_sentence_count(parsed_text['sentence_tokens'])
     filtered_word_tokens = word_token_filter(parsed_text['tagged'])
     parts_of_speech = get_parts_of_speech(parsed_text['tagged'])
-    total_words = len(filtered_word_tokens)
+    total_words = get_words_count(filtered_word_tokens)
     words_frequency = get_words_freq(filtered_word_tokens)
     total_characters = get_characters_count(parsed_text['word_tokens'])
 
@@ -212,25 +232,25 @@ def get_text_measures(parsed_text: dict) -> dict:
     characters_per_word = total_characters / total_words
     syllables_per_word = total_syllables / total_words
     word_per_sentence = total_words / total_sentences
-    sentences_per_paragraph = total_sentences / total_paragraphs
+    # sentences_per_paragraph = total_sentences / total_paragraphs
 
     stats = dict([
         ('Average number of characters per word', characters_per_word),
         ('Average number of syllables per word', syllables_per_word),
         ('Average number of words per sentence', word_per_sentence),
-        ('Sentences per paragraph', sentences_per_paragraph),
+        # ('Sentences per paragraph', sentences_per_paragraph),
         ('Number of characters', total_characters),
         ('Syllables', total_syllables),
         ('Number of words', total_words),
         ('Unique words', len(total_unique_words)),
         ('Number of sentences', total_sentences),
-        ('Number of paragraphs', total_paragraphs),
+        # ('Number of paragraphs', total_paragraphs),
         ('Number of long words', total_long_words),
         ('Number of complex words', total_complex_words),
         ('Words frequency', words_frequency)
     ])
 
-    readability = dict([
+    readability_grades = dict([
         ('Kincaid', kincaid_grade_level(total_syllables, total_words, total_sentences)),
         ('ARI', ari(total_characters, total_words, total_sentences)),
         ('Coleman-Liau',
@@ -242,7 +262,7 @@ def get_text_measures(parsed_text: dict) -> dict:
     ])
 
     return dict([
-        ('READABILITY GRADES', readability),
+        ('READABILITY GRADES', readability_grades),
         ('TEXT INFO', stats),
         ('PARTS OF SPEECH', parts_of_speech)
     ])
