@@ -1,4 +1,5 @@
 import cProfile
+import pdb
 
 from text_parser import text_parsing
 from text_stats import get_text_measures
