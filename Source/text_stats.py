@@ -1,6 +1,5 @@
 from __future__ import division, print_function, unicode_literals
 from typing import List, Dict
-from utils import is_word_long
 from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
 from nltk.probability import FreqDist
 try:
@@ -220,10 +219,10 @@ def get_text_measures(parsed_text: dict) -> dict:
         syllable = get_syllables_counter(word_token)
         total_syllables += syllable
 
-        if is_word_long(word_token):
+        if len(word_token) >= 7:
             total_long_words += 1
 
-        if syllable >= 3 and not word_token[0].isupper():  # TODO: magic number!!
+        if syllable >= 3:  # and not word_token[0].isupper():  # TODO: magic number!!
             total_complex_words += 1
 
     if not total_words:
