@@ -1,5 +1,4 @@
-import cProfile
-import pdb
+# import cProfile
 
 from text_parser import text_parsing
 from text_stats import get_text_measures
@@ -10,7 +9,7 @@ from dict_displayer import display_dict
 
 def main():
 
-    results = ''
+    results = None
     args = args_parsing()
 
     if args.input_file:

@@ -40,7 +40,7 @@ ARI_LEVELS = {
     'Very easy to read': range(1, 5, 1),
     'A text is considered ideal for average readers': range(5, 8, 1),
     'Fairly difficult to read': range(8, 11, 1),
-    'Too hard to read for the majority of readers': range(10, 100, 1)
+    'Too hard to read for the majority of readers': range(10, 20, 1)
 }
 
 
@@ -49,7 +49,7 @@ COLEMAN_LIAU_INDEX_LEVELS = {
     'Very easy to read': range(1, 5, 1),
     'A text is considered ideal for average readers': range(5, 8, 1),
     'Fairly difficult to read': range(8, 11, 1),
-    'Too hard to read for the majority of readers': range(10, 100, 1)
+    'Too hard to read for the majority of readers': range(10, 20, 1)
 }
 
 

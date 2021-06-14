@@ -114,7 +114,8 @@ def gunning_fog_index(total_words: float, total_complex_words: float, total_sent
     readability_score = round(
         GUNNING_FOX_INDEX_CONSTANTS['FIRST'] * ((total_words / total_sentences) + (GUNNING_FOX_INDEX_CONSTANTS[
                                                                                        'SECOND'] * (
-                                                                                               total_complex_words / total_words))))
+                                                                                               total_complex_words /
+                                                                                               total_words))))
 
     for readability_level, score in GUNNING_FOG_INDEX_LEVELS.items():
         if readability_score in score:
