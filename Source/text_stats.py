@@ -250,7 +250,7 @@ def get_text_measures(parsed_text: dict) -> dict:
     fog = gunning_fog_index(total_words, total_complex_words, total_sentences)
     absolute_score = get_absolute_score(kincaid, ari_, coleman_liau, flesch, fog)
     print("-" * 20, '\n', "ABSOLUTE READABILITY", "\n", "-" * 20)
-    print(f"Text has {absolute_score} general score")
+    print(f"Text has {absolute_score} general score --> Text is difficult to read")
 
     stats = dict([
         ('Average number of characters per word', characters_per_word),
