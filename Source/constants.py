@@ -1,3 +1,6 @@
+COMPLEX_WORD_SYLLABLES = 3
+LONG_WORD_SYLLABLES = 7
+
 KINCAID_GRADE_LEVEL_CONSTANTS = dict(FIRST=0.39,
                                      SECOND=11.8,
                                      THIRD=15.59)
@@ -59,4 +62,13 @@ GUNNING_FOG_INDEX_LEVELS = {
     'A text is considered ideal for average readers': range(5, 8, 1),
     'Fairly difficult to read': range(8, 11, 1),
     'Too hard to read for the majority of readers': range(11, 21, 1)
+}
+
+
+GRADES_RANGE = {
+    'kincaid': 19,
+    'flesch': 100,
+    'ari': 20,
+    'coleman': 20,
+    'fog': 21
 }

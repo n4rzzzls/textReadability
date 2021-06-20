@@ -1,5 +1,3 @@
-# import cProfile
-
 from text_parser import text_parsing
 from text_stats import get_text_measures
 from file_nandler import file_reader, file_writer
@@ -27,9 +25,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # pr = cProfile.Profile()
-    # pr.enable()
     main()
-    # pr.disable()
-    # # after your program ends
-    # pr.print_stats(sort="calls")
