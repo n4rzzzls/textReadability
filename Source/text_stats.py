@@ -1,12 +1,8 @@
-from __future__ import division, print_function, unicode_literals
 from typing import List, Dict
-from utils import is_word_long
 from readabilty_grades import kincaid_grade_level, ari, coleman_liau_index, flesch_reading_ease, gunning_fog_index
 from nltk.probability import FreqDist
-try:
-    import re2 as re
-except ImportError:
-    import re
+import re
+from constants import GRADES_RANGE as gr, COMPLEX_WORD_SYLLABLES, LONG_WORD_SYLLABLES
 
 
 def get_sentence_count(sentence_tokens: List[str]) -> int:
@@ -60,27 +56,6 @@ def get_words_freq(word_tokens: List[str]) -> List[tuple[str, int]]:
 
 def get_words_count(filtered_word_tokens: List[str]) -> int:
     return len(filtered_word_tokens)
-
-
-# def get_paragraphs_count(raw_text: List[str]) -> int:
-#     """
-#     Calculates the quantity of paragraphs present in a text
-#     :param raw_text: raw text from input file
-#     :return: quantity of paragraphs
-#     """
-#     paragraphs_count = 1
-#     is_newline = False
-#
-#     for char in raw_text:
-#
-#         if char == "\n" and not is_newline:
-#             is_newline = True
-#
-#         elif is_newline and char == "\n":
-#             paragraphs_count += 1
-#             is_newline = False
-#
-#     return paragraphs_count
 
 
 def get_characters_count(word_tokens: List[str]) -> int:
@@ -170,8 +145,7 @@ TAG_WORD_CATEGORY_MAPPING = {
 }
 
 
-# Returns dictionary with words usage: nouns, adverbs and so on
-def get_parts_of_speech(tagged_word_tokens: List) -> Dict[str, int]:
+def get_parts_of_speech(tagged_word_tokens: list) -> Dict[str, int]:
     """
     Distributes the words amongst parts of speech
     :param tagged_word_tokens:
@@ -196,6 +170,23 @@ def get_parts_of_speech(tagged_word_tokens: List) -> Dict[str, int]:
     return words
 
 
+def get_absolute_score(kincaid: list, flesch: list, ari_: list, coleman: list, fog: list) -> int:
+    """
+    Calculates absolute readability value
+    :return: The absolute readability value
+    """
+    kincaid, _ = kincaid
+    flesch, _ = flesch
+    ari_, _ = ari_
+    coleman, _ = coleman
+    fog, _ = fog
+
+    result = round(100 * (kincaid / gr['kincaid'] + flesch / gr['flesch'] + ari_ / gr['ari'] + coleman / gr['coleman']
+                          + fog / gr['fog']) / 5)
+
+    return result
+
+
 def get_text_measures(parsed_text: dict) -> dict:
     """
     Performs all necessary text measures
@@ -207,9 +198,8 @@ def get_text_measures(parsed_text: dict) -> dict:
     total_long_words = 0
     total_unique_words = set()
 
-    # total_paragraphs = get_paragraphs_count(parsed_text['raw_text'])
-    total_sentences = get_sentence_count(parsed_text['sentence_tokens'])
     filtered_word_tokens = word_token_filter(parsed_text['tagged'])
+    total_sentences = get_sentence_count(parsed_text['sentence_tokens'])
     parts_of_speech = get_parts_of_speech(parsed_text['tagged'])
     total_words = get_words_count(filtered_word_tokens)
     words_frequency = get_words_freq(filtered_word_tokens)
@@ -220,10 +210,10 @@ def get_text_measures(parsed_text: dict) -> dict:
         syllable = get_syllables_counter(word_token)
         total_syllables += syllable
 
-        if is_word_long(word_token):
+        if len(word_token) >= LONG_WORD_SYLLABLES:
             total_long_words += 1
 
-        if syllable >= 3 and not word_token[0].isupper():  # TODO: magic number!!
+        if syllable >= COMPLEX_WORD_SYLLABLES and not word_token[0].isupper():
             total_complex_words += 1
 
     if not total_words:
@@ -232,33 +222,35 @@ def get_text_measures(parsed_text: dict) -> dict:
     characters_per_word = total_characters / total_words
     syllables_per_word = total_syllables / total_words
     word_per_sentence = total_words / total_sentences
-    # sentences_per_paragraph = total_sentences / total_paragraphs
+    kincaid = kincaid_grade_level(total_syllables, total_words, total_sentences)
+    ari_ = ari(total_characters, total_words, total_sentences)
+    coleman_liau = coleman_liau_index(total_characters, total_words, total_sentences)
+    flesch = flesch_reading_ease(total_syllables, total_words, total_sentences)
+    fog = gunning_fog_index(total_words, total_complex_words, total_sentences)
+    absolute_score = get_absolute_score(kincaid, ari_, coleman_liau, flesch, fog)
+    print("-" * 20, '\n', "ABSOLUTE READABILITY", "\n", "-" * 20)
+    print(f"Text has {absolute_score} general score")
 
     stats = dict([
         ('Average number of characters per word', characters_per_word),
         ('Average number of syllables per word', syllables_per_word),
         ('Average number of words per sentence', word_per_sentence),
-        # ('Sentences per paragraph', sentences_per_paragraph),
         ('Number of characters', total_characters),
         ('Syllables', total_syllables),
         ('Number of words', total_words),
         ('Unique words', len(total_unique_words)),
         ('Number of sentences', total_sentences),
-        # ('Number of paragraphs', total_paragraphs),
         ('Number of long words', total_long_words),
         ('Number of complex words', total_complex_words),
         ('Words frequency', words_frequency)
     ])
 
     readability_grades = dict([
-        ('Kincaid', kincaid_grade_level(total_syllables, total_words, total_sentences)),
-        ('ARI', ari(total_characters, total_words, total_sentences)),
-        ('Coleman-Liau',
-         coleman_liau_index(total_characters, total_words, total_sentences)),
-        ('Flesch Reading Ease',
-         flesch_reading_ease(total_syllables, total_words, total_sentences)),
-        ('Gunning Fog Index',
-         gunning_fog_index(total_words, total_complex_words, total_sentences))
+        ('Kincaid', kincaid),
+        ('ARI', ari_),
+        ('Coleman-Liau', coleman_liau),
+        ('Flesch Reading Ease', flesch),
+        ('Gunning Fog Index', fog)
     ])
 
     return dict([

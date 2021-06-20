@@ -39,11 +39,11 @@ class TestTextStats(unittest.TestCase):
 
     def test_chars_count(self):
 
-        word = "readability"
+        word = ["readability", "text"]
 
         result = ts.get_characters_count(word)
 
-        self.assertEqual(result, 11)
+        self.assertEqual(result, 15)
 
     def test_words_filter(self):
 
