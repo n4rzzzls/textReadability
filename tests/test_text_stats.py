@@ -16,7 +16,8 @@ class TestTextStats(unittest.TestCase):
 
     def test_sentences_count(self):
 
-        sentences = ['Two hundred Palestinians, including 59 children', 'have been killed during a week of attacks in Gaza',
+        sentences = ['Two hundred Palestinians, including 59 children',
+                     'have been killed during a week of attacks in Gaza',
                      'Early on Monday, warplanes launched more heavy airstrikes on Gaza City']
 
         result = ts.get_sentence_count(sentences)
